@@ -39,7 +39,8 @@ div.paragraph { display:block; padding-bottom:2em; }
 <i id="zoomOut" class="control fa fa-search-minus" aria-hidden="true" title="Smaller text"></i>
 <i id="clear" class="control fa fa-window-close" aria-hidden="true" title="Clear screen"></i>
 <p class="help">
-    Say "clear screen" to clear screen. Other voice commands: "new line" or "new paragraph". You can dictate punctuation.
+    Say "clear screen" to clear screen. Other voice commands: "new line" or "new paragraph". You can dictate punctuation.<br>
+    <a href="https://github.com/bmamlin/visible-speech">source code</a>
 </p>
 </div>
 <div id="out"></div>
@@ -67,6 +68,7 @@ recognition.onend = function() {
     console.log("stopped listening");
     listening = false;
     $('#mic').removeClass('on')
+    startButton();
 };
 
 recognition.onresult = function(event) { //the event holds the results

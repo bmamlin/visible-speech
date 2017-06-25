@@ -21,7 +21,7 @@ body { font-family: Verdana; }
     opacity: 1;
     z-index: 1;
 }
-.help { float: right; color: #777; font-size: 10pt; width: 300px; }
+.help { float: right; color: #777; font-size: 10pt; width: 400px; padding-right: 1em;}
 .control { font-size: 60pt; user-select:none; }
 #mic { color: lightgrey; }
 #mic.on { color:red; }
@@ -39,13 +39,14 @@ div.paragraph { display:block; padding-bottom:2em; }
 <i id="zoomOut" class="control fa fa-search-minus" aria-hidden="true" title="Smaller text"></i>
 <i id="clear" class="control fa fa-window-close" aria-hidden="true" title="Clear screen"></i>
 <p class="help">
-    Say "clear screen" to clear screen. Other voice commands: "new line" or "new paragraph". You can dictate punctuation.<br>
+    Say "clear screen" to clear screen. Other voice commands: "new line", "new paragraph", and "stop listening". Tip: you can dictate punctuation (e.g., say "question mark").<br>
     <a href="https://github.com/bmamlin/visible-speech">source code</a>
 </p>
 </div>
 <div id="out"></div>
 <script>
 var listening = false;
+var autoRestart = true;
 if (!('webkitSpeechRecognition' in window)) {
     //Speech API not supported here…
 } else { //Let’s do some cool stuff :)
@@ -67,8 +68,10 @@ recognition.onend = function() {
     //Again – give the user feedback that you are not listening anymore. If you wish to achieve continuous recognition – you can write a script to start the recognizer again here.
     console.log("stopped listening");
     listening = false;
-    $('#mic').removeClass('on')
-    startButton();
+    $('#mic').removeClass('on');
+    if (autoRestart) {
+        startButton();
+    }
 };
 
 recognition.onresult = function(event) { //the event holds the results
@@ -88,6 +91,10 @@ recognition.onresult = function(event) { //the event holds the results
     if (isFinal) {
         if (/clear screen/i.test(out)) {
             clearScreen();
+            return;
+        }
+        if (/stop listening/i.test(out)) {
+            startButton();
             return;
         }
         if (/^\n\n+$/.test(out)) {
@@ -127,9 +134,12 @@ recognition.onresult = function(event) { //the event holds the results
 }; 
 function startButton() {
     if (listening) {
+        autoRestart = false;
         recognition.stop();
     } else {
         recognition.start();
+        autoRestart = true;
+        clearScreen();
         $('#mic').addClass('on');
     }
 }

@@ -1,36 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<style type="text/css">
-span.output {
-    font-size: 100pt;
-    padding-right: 0.5em;
-}
-body { font-family: Verdana; }
-.header {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    padding: 5px;
-    width: 100%;
-    height: 90px;
-    border-bottom: thin solid grey;
-    background-color: white;
-    opacity: 1;
-    z-index: 1;
-}
-.help { float: right; color: #777; font-size: 10pt; width: 400px; padding-right: 1em;}
-.control { font-size: 60pt; user-select:none; }
-#mic { color: lightgrey; }
-#mic.on { color:red; }
-#out { position: absolute; top: 95px; }
-span.output:not(.final) { color: #AAA; }
-span.output.final { color: black; }
-div.newline { display:block; }
-div.paragraph { display:block; padding-bottom:2em; }
-</style>
+    <title>Visible Speech</title>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
 <div class="header">
@@ -38,128 +13,13 @@ div.paragraph { display:block; padding-bottom:2em; }
 <i id="zoomIn" class="control fa fa-search-plus" aria-hidden="true" title="Bigger text"></i>
 <i id="zoomOut" class="control fa fa-search-minus" aria-hidden="true" title="Smaller text"></i>
 <i id="clear" class="control fa fa-window-close" aria-hidden="true" title="Clear screen"></i>
+<a href="https://github.com/bmamlin/visible-speech"><img class="logo" src="visible-speech.png" /></a>
 <p class="help">
-    Say "clear screen" to clear screen. Other voice commands: "new line", "new paragraph", and "stop listening". Tip: you can dictate punctuation (e.g., say "question mark").<br>
-    <a href="https://github.com/bmamlin/visible-speech">source code</a>
+    Say "clear screen" (or just "clear") to clear screen. Other voice commands: "new line", "new paragraph", "undo" (or "delete"), zoom in", "zoom out" (or "bigger", "smaller") and "stop listening". Tip: you can also dictate punctuation (e.g., say "question mark").
 </p>
 </div>
 <div id="out"></div>
 <script>
-var listening = false;
-var autoRestart = true;
-if (!('webkitSpeechRecognition' in window)) {
-    //Speech API not supported here…
-} else { //Let’s do some cool stuff :)
-    var recognition = new webkitSpeechRecognition(); //That is the object that will manage our whole recognition process. 
-    recognition.continuous = true;   //Suitable for dictation. 
-    recognition.interimResults = true;  //If we want to start receiving results even if they are not final.
-    //Define some more additional parameters for the recognition:
-    recognition.lang = "en-US"; 
-    recognition.maxAlternatives = 1; //Since from our experience, the highest result is really the best...
-}
-recognition.onstart = function() {
-    //Listening (capturing voice from audio input) started.
-    //This is a good place to give the user visual feedback about that (i.e. flash a red light, etc.)
-    console.log("listening");
-    listening = true;
-};
-
-recognition.onend = function() {
-    //Again – give the user feedback that you are not listening anymore. If you wish to achieve continuous recognition – you can write a script to start the recognizer again here.
-    console.log("stopped listening");
-    listening = false;
-    $('#mic').removeClass('on');
-    if (autoRestart) {
-        startButton();
-    }
-};
-
-recognition.onresult = function(event) { //the event holds the results
-//Yay – we have results! Let’s check if they are defined and if final or not:
-    if (typeof(event.results) === 'undefined') { //Something is wrong…
-        recognition.stop();
-        return;
-    }
-
-    var out = '';
-    var isFinal = true;
-    for (var i = event.resultIndex; i < event.results.length; i++) {
-        if (!event.results[i].isFinal) isFinal = false;
-        out = out + event.results[i][0].transcript + ' ';
-    }
-    out = out.replace(/^ +| +$/g,''); // remove spaces (not newlines)
-    if (isFinal) {
-        if (/clear screen/i.test(out)) {
-            clearScreen();
-            return;
-        }
-        if (/stop listening/i.test(out)) {
-            startButton();
-            return;
-        }
-        if (/^\n\n+$/.test(out)) {
-            $('#out').append('<div class="paragraph"></div>');
-            return;
-        }
-        if (/^\n$/.test(out)) {
-            $('#out').append('<div class="newline"></div>');
-            return;
-        }
-    }
-    var elemId = 'i' + event.resultIndex;
-    var elem = $('#' + elemId);
-    if (!elem.length) {
-        elem = $('<span id="'+elemId+'" class="output"></span>');
-        //console.log(div);
-        $('#out').append(elem);
-    }
-    if (isFinal) {
-        $(elem).addClass('final');
-    }
-    $(elem).text(out);
-    $('html, body').animate({
-        scrollTop: $(document).height()
-    }, 'fast');
-    //console.log(event.resultIndex + ': ' + out + (isFinal ? ' [final]' : ''));
-    //console.log(event);
-    /*
-    for (var i = event.resultIndex; i < event.results.length; ++i) {      
-        if (event.results[i].isFinal) { //Final results
-            console.log("final results: " + event.results[i][0].transcript);   //Of course – here is the place to do useful things with the results.
-        } else {   //i.e. interim...
-            console.log("interim results: [" + i + "] " + event.results[i][0].transcript);  //You can use these results to give the user near real time experience.
-        } 
-    } //end for loop
-    */
-}; 
-function startButton() {
-    if (listening) {
-        autoRestart = false;
-        recognition.stop();
-    } else {
-        recognition.start();
-        autoRestart = true;
-        clearScreen();
-        $('#mic').addClass('on');
-    }
-}
-function increaseFont() {
-    var fontSize = parseInt(/(\d+)pt/.exec(document.styleSheets[1].cssRules[0].style.fontSize)[1]);
-    if (fontSize < 150) {
-        fontSize += 4;
-        document.styleSheets[1].cssRules[0].style.fontSize = fontSize + 'pt';
-    }
-}
-function decreaseFont() {
-    var fontSize = parseInt(/(\d+)pt/.exec(document.styleSheets[1].cssRules[0].style.fontSize)[1]);
-    if (fontSize > 8) {
-        fontSize -= 4;
-        document.styleSheets[1].cssRules[0].style.fontSize = fontSize + 'pt';
-    }
-}
-function clearScreen() {
-    $('#out').empty();
-}
 $(document).ready(function() {
     $('#mic').click(startButton);
     var zoomTimer;
@@ -178,6 +38,7 @@ $(document).ready(function() {
     .mouseup(function() { clearInterval(zoomTimer); })
     .mouseout(function() { clearInterval(zoomTimer); });
     $('#clear').click(clearScreen);
+    setFontSize(localStorage.getItem('visiblespeech.fontSize'));
     startButton();
 });
 </script>

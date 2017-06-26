@@ -9,7 +9,7 @@ So, I threw together this little one-page app to leverage the speech recognition
 * "delete" – deletes the last segment of recognized speech
 * "bigger" or "smaller" – change the size of text
 * "new line" or "new paragraph" – you can probably guess what these do
-* "stop listening" – turns of the mic
+* "stop listening" – turns off the mic
 
 So, if you are working with a deaf patient (we're assuming he or she has reasonable vision, can read, can speak, and – like in our case – you don't have more effective &amp; effecient ways to communicate). Place a computer at their bedside with a reasonable microphone, open up [visiblespeech.com](http://visiblespeech.com) with a recent version of Chrome, and start talking to your patient.
 

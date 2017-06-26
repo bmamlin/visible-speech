@@ -1,4 +1,4 @@
-# visible-speech
+<img src="visible-speech.png" />
 
 A hacky little one-page app I built one night to play with Chrome's speech recognition API to communicate better 
 with my deaf patients while in the hospital. People had positioned a computer with a terminal at the end of a patient's bed who had recently become deaf. They were typing in notes. I thought, there has to be something better. I tried a handful of phone apps (like [Live Caption](http://www.livecaptionapp.com/)) with some success, but then discovered [Speech Logger](https://speechlogger.appspot.com/en/). Speech Logger's real-time voice-to-text was a better option, but the user interface was cluttered with features we didn't need. Fortunately, the nice people at Speech Logger were kind enough to document the [Web Speech API](https://speechlogger.appspot.com/en/) to get me started.

@@ -63,7 +63,7 @@ div.paragraph {
     display: none;
     position: fixed;
     top: 200px;
-    left: 50px;
+    left: 5%;
     width: 90%;
     border: thick solid black;
     border-radius: 10px;

@@ -5,7 +5,9 @@ var lastKeepAliveTime = 0;
 var cycle = 0;
 
 if (!('webkitSpeechRecognition' in window)) {
-    //Speech API not supported here…
+    //Speech API not supported here
+    incompatible();
+    recognition = {};
 } else { //Let’s do some cool stuff :)
     var recognition = new webkitSpeechRecognition(); //That is the object that will manage our whole recognition process. 
     recognition.continuous = true;   //Suitable for dictation. 
@@ -13,8 +15,8 @@ if (!('webkitSpeechRecognition' in window)) {
     //Define some more additional parameters for the recognition:
     recognition.lang = "en-US"; 
     recognition.maxAlternatives = 1; //Since from our experience, the highest result is really the best...
+    keepAlive();
 }
-keepAlive();
 
 recognition.onstart = function() {
     //Listening (capturing voice from audio input) started.
@@ -139,6 +141,9 @@ function startButton() {
         autoRestart = false;
         recognition.stop();
     } else {
+        if (!recognition.start) {
+            return;
+        }
         recognition.start();
         autoRestart = true;
         clearScreen();
@@ -171,4 +176,8 @@ function clearScreen() {
 
 function prune() {
     $(':not(:nth-last-child(-n+100))', '#out').remove();
+}
+
+function incompatible() {
+    setTimeout(function() {$('#incompatible').show();}, 0);
 }

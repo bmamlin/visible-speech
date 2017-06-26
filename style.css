@@ -59,3 +59,14 @@ div.paragraph {
     display: block;
     padding-bottom: 2em;
 }
+#incompatible {
+    display: none;
+    position: fixed;
+    top: 200px;
+    left: 50px;
+    width: 90%;
+    border: thick solid black;
+    border-radius: 10px;
+    padding: 1em;
+    font-size: 20pt;
+}

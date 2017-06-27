@@ -52,7 +52,7 @@ recognition.onresult = function(event) { //the event holds the results
     }
     out = out.replace(/^ +| +$/g,''); // remove spaces (not newlines)
     if (isFinal) {
-        if (/^clear|clear screen$/i.test(out)) {
+        if (/^(clear|clear screen)$/i.test(out)) {
             clearScreen();
             return;
         }
@@ -71,17 +71,17 @@ recognition.onresult = function(event) { //the event holds the results
             $('#out').append('<div class="output newline"></div>');
             return;
         }
-        if (/^zoom in|bigger$/i.test(out)) {
+        if (/^(zoom in|bigger)$/i.test(out)) {
             $(':last', '#out').remove();
             setTimeout(increaseFont, 10);
             return;
         }
-        if (/^zoom out|smaller$/i.test(out)) {
+        if (/^(zoom out|smaller)$/i.test(out)) {
             $(':last', '#out').remove();
             setTimeout(decreaseFont, 10);
             return;
         }
-        if (/^undo|delete$/i.test(out)) {
+        if (/^(undo|delete)$/i.test(out)) {
             $(':nth-last-child(-n+2)', '#out').remove();
             return;
         }

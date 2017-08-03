@@ -19,48 +19,57 @@ if (!('webkitSpeechRecognition' in window)) {
 var commands = [
     {
         "when": /^(clear|clear screen)$/i,
-        "do": function(e) { clearScreen(); }
+        "do": function(e) {
+            clearScreen();
+        },
+        "log": "clear"
     },
     {
         "when": /^stop listening$/i,
         "do": function(e) {
             $(':last', '#out').remove();
             startButton();
-        }
+        },
+        "log": "stop"
     },
     {
         "when": /^\n\n+$/,
         "do": function(e) {
             $(':last', '#out').remove();
             $('#out').append('<div class="output paragraph"></div>');
-        }
+        },
+        "log": "newline"
     },
     {
         "when": /^\n$/,
         "do": function(e) {
             $(':last', '#out').remove();
             $('#out').append('<div class="output newline"></div>');
-        }
+        },
+        "log": "paragraph"
     },
     {
         "when": /^(zoom in|bigger)$/i,
         "do": function(e) {
             $(':last', '#out').remove();
             setTimeout(increaseFont, 10);
-        }
+        },
+        "log": "bigger"
     },
     {
         "when": /^(zoom out|smaller)$/i,
         "do": function(e) {
             $(':last', '#out').remove();
             setTimeout(decreaseFont, 10);
-        }
+        },
+        "log": "smaller"
     },
     {
         "when": /^(undo|delete)$/i,
         "do": function(e) {
             $(':nth-last-child(-n+2)', '#out').remove();
-        }
+        },
+        "log": "delete"
     }
     ];
 
@@ -91,12 +100,13 @@ recognition.onresult = function(event) {
         out = out + event.results[i][0].transcript + ' ';
     }
     out = out.replace(/^ +| +$/g,''); // trim, preserving newlines
-    if (isFinal) {
-        for (var i=0; i < commands.length; i++) {
-            if (commands[i].when.test(out)) {
-                commands[i].do(event);
-                return;
+    for (var i=0; i < commands.length; i++) {
+        if (commands[i].when.test(out)) {
+            commands[i].do(event);
+            if (commands[i].log) {
+                ga('send', 'event', 'command', commands[i].log);
             }
+            return;
         }
     }
     var elemId = 'i' + cycle + '-' + event.resultIndex;

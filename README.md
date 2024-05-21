@@ -13,4 +13,7 @@ So, I threw together this little one-page app to leverage the speech recognition
 
 So, if you are working with a deaf patient (we're assuming he or she has reasonable vision, can read, can speak, and – like in our case – you don't have more effective &amp; effecient ways to communicate). Place a computer at their bedside with a reasonable microphone, open up [visiblespeech.com](http://visiblespeech.com) with a recent version of Chrome, and start talking to your patient.
 
-Give it a try at https://bmamlin.github.io/visible-speech/ _(requires Chrome browser)_
+> [!IMPORTANT]
+> All audio spoken when [visiblespeech.com](https://visiblespeech.com) is actively 
+> listening is sent to Google through Chrome's speech recognition API, so it should 
+> not be used for private or privileged conversations.
